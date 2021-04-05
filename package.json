@@ -21,7 +21,7 @@
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.2.1",
-    "ethers": "^5.0.23",
+    "ethers": "^5.1.0",
     "hardhat": "^2.0.4",
     "hardhat-gas-reporter": "^1.0.4",
     "hardhat-typechain": "^0.3.3",

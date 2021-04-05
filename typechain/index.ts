@@ -3,10 +3,10 @@
 /* eslint-disable */
 export type { ERC20 } from "./ERC20";
 export type { IERC20 } from "./IERC20";
-export type { ERC20Test } from "./ERC20Test";
 export type { LFeiPair } from "./LFeiPair";
+export type { TestERC20 } from "./TestERC20";
 
 export { ERC20__factory } from "./factories/ERC20__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";
-export { ERC20Test__factory } from "./factories/ERC20Test__factory";
 export { LFeiPair__factory } from "./factories/LFeiPair__factory";
+export { TestERC20__factory } from "./factories/TestERC20__factory";

@@ -43,7 +43,7 @@ contract LFeiPair is ERC20 {
     // Burn LFeiPair from the sender and send equivalent amount of Fei tokens
     function withdrawFei(uint256 amountLFeiIn) public {
         _burn(msg.sender, amountLFeiIn);
-        TransferHelper.safeTransferFrom(fei, address(this), msg.sender, amountLFeiIn);
+        TransferHelper.safeTransfer(fei, msg.sender, amountLFeiIn);
     }
 
     // Burn LFeiPair from the sender and send equivalent amount of Fei tokens
