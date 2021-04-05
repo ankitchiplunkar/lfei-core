@@ -2,8 +2,10 @@
 pragma solidity ^0.6.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/lib/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "./ILFeiPairCallee.sol";
 
 /**
  * @notice A mintable ERC20
@@ -54,5 +56,22 @@ contract LFeiPair is ERC20 {
         uint256 amountUSDCFees = amountUSDCOut.sub(amountUSDCWithdrawn);
         TransferHelper.safeTransfer(usdc, msg.sender, amountUSDCWithdrawn);
         TransferHelper.safeTransfer(usdc, contractCreator, amountUSDCFees);
+    }
+
+    function arb(
+        uint256 amountFeiOut,
+        address to,
+        bytes calldata data
+    ) public {
+        uint256 reserveFei = IERC20(fei).balanceOf(address(this));
+        uint256 reserveUSDC = IERC20(usdc).balanceOf(address(this));
+        TransferHelper.safeTransfer(fei, msg.sender, amountFeiOut); // optimistically sending fei tokens
+        if (data.length > 0) ILFeiPairCallee(to).lFeiPairCall(msg.sender, amountFeiOut, data);
+        uint256 newReserveUSDC = IERC20(usdc).balanceOf(address(this));
+        uint256 newReserveFei = IERC20(fei).balanceOf(address(this));
+        uint256 amountUSDCIn = newReserveUSDC.sub(reserveUSDC);
+        uint256 minimumUSDCExpected = amountFeiOut.mul(conversionRateNumerator).div(denominator);
+        require(reserveFei.sub(newReserveFei) > amountFeiOut, "Extra Fei extracted from contract");
+        require(amountUSDCIn > minimumUSDCExpected, "USDC returned insufficient");
     }
 }
