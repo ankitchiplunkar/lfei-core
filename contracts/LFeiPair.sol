@@ -11,12 +11,14 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 contract LFeiPair is ERC20 {
     using SafeMath for uint256;
 
+    // contract constants
+    uint128 public constant usdcOutNumerator = 995; // output is 1 - 0.5%
+    uint128 public constant denominator = 1000; // fee is 0.5%
+
+    // constructor constants
     address public usdc;
     address public fei;
-    uint128 constant usdcOutNumerator = 95; // fee is 0.5%
-    uint128 constant denominator = 1000; // fee is 0.5%
-
-    address contractCreator;
+    address public contractCreator;
     uint256 public conversionRateNumerator; // this conversion rate is divided by denominator (1000)
 
     constructor(
