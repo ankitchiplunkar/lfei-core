@@ -36,7 +36,7 @@ describe("LFeiPair", () => {
       expect(await tokenInstance.symbol()).to.equal("LFP");
       expect(await tokenInstance.totalSupply()).to.equal(0);
       // Contract constants
-      expect(await tokenInstance.usdcOutNumerator()).to.equal(995);
+      expect(await tokenInstance.usdcFeesNumerator()).to.equal(999);
       expect(await tokenInstance.denominator()).to.equal(1000);
       // Constructor constants
       expect(await tokenInstance.usdc()).to.equal(usdcAddress);
@@ -87,6 +87,48 @@ describe("LFeiPair", () => {
       await feiInstance.approve(tokenInstance.address, initialSupply);
       await tokenInstance.depositFei(initialSupply)
       await expect(tokenInstance.withdrawFei(2 * initialSupply)).to.be.reverted;
+    });
+
+  });
+
+  describe("Withdraw USDC", async () => {
+    it("Should correctly withdraw usdc", async () => {
+      const [deployer, user] = await ethers.getSigners();
+      const tokenInstance = new LFeiPair__factory(deployer).attach(tokenAddress);
+      const feiInstance = new TestERC20__factory(deployer).attach(feiAddress);
+      const usdcInstance = new TestERC20__factory(deployer).attach(usdcAddress);
+
+      await usdcInstance.transfer(user.address, initialSupply);
+      await feiInstance.transfer(user.address, initialSupply);
+
+      await feiInstance.connect(user).approve(tokenInstance.address, initialSupply);
+      await tokenInstance.connect(user).depositFei(initialSupply);
+      await usdcInstance.connect(user).transfer(tokenInstance.address, initialSupply);
+
+      expect(await feiInstance.balanceOf(user.address)).to.equal(0);
+      expect(await tokenInstance.balanceOf(user.address)).to.equal(initialSupply);
+      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(initialSupply);
+      await tokenInstance.connect(user).withdrawUSDC(initialSupply);
+      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(50);
+      expect(await usdcInstance.balanceOf(user.address)).to.equal(949);
+      expect(await usdcInstance.balanceOf(deployer.address)).to.equal(1);
+      expect(await tokenInstance.balanceOf(user.address)).to.equal(0);
+    });
+
+    it("Should fail in withdraw usdc", async () => {
+      const [deployer, user] = await ethers.getSigners();
+      const tokenInstance = new LFeiPair__factory(deployer).attach(tokenAddress);
+      const feiInstance = new TestERC20__factory(deployer).attach(feiAddress);
+      const usdcInstance = new TestERC20__factory(deployer).attach(usdcAddress);
+
+      await usdcInstance.transfer(user.address, initialSupply);
+      await feiInstance.transfer(user.address, initialSupply);
+
+      await feiInstance.connect(user).approve(tokenInstance.address, initialSupply);
+      await tokenInstance.connect(user).depositFei(initialSupply);
+
+      // transaction reverts because LFeiPair does not have enough USDC tokens
+      await expect(tokenInstance.connect(user).withdrawUSDC(initialSupply)).to.be.reverted;
     });
 
   });

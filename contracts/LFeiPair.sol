@@ -12,7 +12,7 @@ contract LFeiPair is ERC20 {
     using SafeMath for uint256;
 
     // contract constants
-    uint128 public constant usdcOutNumerator = 995; // output is 1 - 0.5%
+    uint128 public constant usdcFeesNumerator = 999; // output is 1 - 0.1%
     uint128 public constant denominator = 1000; // fee is 0.5%
 
     // constructor constants
@@ -49,10 +49,10 @@ contract LFeiPair is ERC20 {
     // Burn LFeiPair from the sender and send equivalent amount of Fei tokens
     function withdrawUSDC(uint256 amountLFeiIn) public {
         _burn(msg.sender, amountLFeiIn);
-        uint256 amountUSDCOut = amountLFeiIn.mul(usdcOutNumerator).div(denominator);
-        uint256 amountUSDCWithdrawn = amountUSDCOut.mul(conversionRateNumerator).div(denominator);
+        uint256 amountUSDCOut = amountLFeiIn.mul(conversionRateNumerator).div(denominator);
+        uint256 amountUSDCWithdrawn = amountUSDCOut.mul(usdcFeesNumerator).div(denominator);
         uint256 amountUSDCFees = amountUSDCOut.sub(amountUSDCWithdrawn);
-        TransferHelper.safeTransferFrom(usdc, address(this), msg.sender, amountUSDCWithdrawn);
-        TransferHelper.safeTransferFrom(usdc, address(this), contractCreator, amountUSDCFees);
+        TransferHelper.safeTransfer(usdc, msg.sender, amountUSDCWithdrawn);
+        TransferHelper.safeTransfer(usdc, contractCreator, amountUSDCFees);
     }
 }
