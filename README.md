@@ -1,7 +1,7 @@
 # LFei - Marketplace between Fei token holders and arbitrageurs 
 
 These contracts provide a marketplace for **Fei holders** who want to sell but:
-1. Don't have enough capital to quickly convert at a favourable price
+1. Don't have enough capital to quickly convert at a favorable price
 2. Don't want to get involved into the complexities of an arbitrage
 
 and, **arbitrageurs** who need ennough capital to make their trades profitable.
