@@ -4,9 +4,11 @@ These contracts provide a marketplace for **Fei holders** who want to sell but:
 1. Don't have enough capital to quickly convert at a favorable price
 2. Don't want to get involved into the complexities of an arbitrage
 
-and, **arbitrageurs** who need ennough capital to make their trades profitable.
+and, **arbitrageurs** who need enough capital to make their trades profitable.
 
 Several contracts will be deployed each with a unique `conversionRate`, the contracts guarantee that `amountFei` of Fei will be converted to `conversionRate*amountFei` USDC.
+
+These contracts can be treated as limit orders, where the execution is happening via arbitrageurs instead of an exchange.
 
 ### Contract Flow
 1. [depositFei(uint256 amountFeiIn)](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L37): Deposit `amountFeiIn` Fei into the contract and receive an equivalent amount of LFei tokens (used by **Fei holders**)
