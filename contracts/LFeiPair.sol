@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/lib/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "./ILFeiPairCallee.sol";
+import "./interfaces/ILFeiPairCallee.sol";
 
 /**
  * @notice A mintable ERC20
@@ -69,9 +69,11 @@ contract LFeiPair is ERC20 {
         if (data.length > 0) ILFeiPairCallee(to).lFeiPairCall(msg.sender, amountFeiOut, data);
         uint256 newReserveUSDC = IERC20(usdc).balanceOf(address(this));
         uint256 newReserveFei = IERC20(fei).balanceOf(address(this));
-        uint256 amountUSDCIn = newReserveUSDC.sub(reserveUSDC);
-        uint256 minimumUSDCExpected = amountFeiOut.mul(conversionRateNumerator).div(denominator);
-        require(reserveFei.sub(newReserveFei) > amountFeiOut, "Extra Fei extracted from contract");
-        require(amountUSDCIn > minimumUSDCExpected, "USDC returned insufficient");
+
+        require(reserveFei > newReserveFei && reserveUSDC < newReserveUSDC, "only one way arb possible");
+        uint256 feiLost = reserveFei - newReserveFei;
+        uint256 equivalentUSDCLost = feiLost.mul(conversionRateNumerator).div(denominator);
+        uint256 usdcGained = newReserveUSDC - reserveUSDC;
+        require(equivalentUSDCLost < usdcGained, "USDC returned insufficient");
     }
 }
