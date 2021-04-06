@@ -1,64 +1,20 @@
-# Solidity Template
+# LFei - Marketplace between Fei token holders and arbitrageurs 
 
-Uses
+These contracts provide a marketplace for **Fei holders** who want to sell but:
+1. Don't have enough capital to quickly convert at a favourable price
+2. Don't want to get involved into the complexities of an arbitrage
 
-- [Hardhat](https://github.com/nomiclabs/hardhat): compile and run the smart contracts on a local development network
-- [TypeChain](https://github.com/ethereum-ts/TypeChain): generate TypeScript types for smart contracts
-- [Ethers](https://github.com/ethers-io/ethers.js/): renowned Ethereum library and wallet implementation
-- [Waffle](https://github.com/EthWorks/Waffle): tooling for writing comprehensive smart contract tests
-- [Solhint](https://github.com/protofire/solhint): linter
-- [Prettier Plugin Solidity](https://github.com/prettier-solidity/prettier-plugin-solidity): code formatter
+and, **arbitrageurs** who need ennough capital to make their trades profitable.
 
-This is a GitHub template, which means you can reuse it as many times as you want. You can do that by clicking the "Use this
-template" button at the top of the page.
+Several contracts will be deployed each with a unique `conversionRate`, the contracts guarantee that `amountFei` of Fei will be converted to `conversionRate*amountFei` USDC.
 
-## Usage
+### Contract Flow
+1. [Fei Holder]: Deposit Fei into the contract and receive an equivalent amount of LFei tokens
+2. [Fei Holder]: Can withdraw Fei by returning LFei tokens
+3. [Arbitrageur]: Can flash loan `amountFei` Fei tokens from the contract but has to return atleast `conversionRate*amountFei` USDC tokens.
+4. [Fei Holder]: Can withdraw USDC by returning LFei tokens, `amountLFei` will return `conversionRate*amountLFei` USDC tokens (minus 0.1% in fees). Any extra USDC can be claimed by the arbitrageur.
+5. [Marketplace]: The marketplace will give 0.1% of USDC tokens to the contract creator for each USDC withdrawal.
 
-### Pre Requisites
-
-Before running any command, make sure to install dependencies:
-
-```sh
-$ yarn install
-```
-
-### Compile
-
-Compile the smart contracts with Hardhat:
-
-```sh
-$ yarn compile
-```
-
-### TypeChain
-
-Compile the smart contracts and generate TypeChain artifacts:
-
-```sh
-$ yarn build
-```
-
-### Test
-
-Run the Mocha tests:
-
-```sh
-$ yarn test
-```
-
-### Deploy contract to netowrk (requires Mnemonic and infura API key)
-
-```
-npx hardhat run --network rinkeby ./scripts/deploy.ts
-```
-
-### Validate a contract with etherscan (requires API ke)
-
-```
-npx hardhat verify --network <network> <DEPLOYED_CONTRACT_ADDRESS> "Constructor argument 1"
-```
-
-### Added plugins
-
-- Gas reporter [hardhat-gas-reporter](https://hardhat.org/plugins/hardhat-gas-reporter.html)
-- Etherscan [hardhat-etherscan](https://hardhat.org/plugins/nomiclabs-hardhat-etherscan.html)
+## Contracts
+### Ropsten:
+1. `ConversionRate=0.99FEI<>USDC`: [0xe675c14714f532852115e83f58a48bfd2eb964c5](https://ropsten.etherscan.io/address/0xe675c14714f532852115e83f58a48bfd2eb964c5)
