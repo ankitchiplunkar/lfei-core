@@ -5,10 +5,12 @@ export type { ERC20 } from "./ERC20";
 export type { IERC20 } from "./IERC20";
 export type { ILFeiPairCallee } from "./ILFeiPairCallee";
 export type { LFeiPair } from "./LFeiPair";
+export type { TestArber } from "./TestArber";
 export type { TestERC20 } from "./TestERC20";
 
 export { ERC20__factory } from "./factories/ERC20__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";
 export { ILFeiPairCallee__factory } from "./factories/ILFeiPairCallee__factory";
 export { LFeiPair__factory } from "./factories/LFeiPair__factory";
+export { TestArber__factory } from "./factories/TestArber__factory";
 export { TestERC20__factory } from "./factories/TestERC20__factory";

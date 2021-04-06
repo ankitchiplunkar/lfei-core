@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 import chai from "chai";
 import { solidity } from "ethereum-waffle";
-import { LFeiPair__factory, TestERC20__factory } from "../typechain";
+import { LFeiPair__factory, TestERC20__factory, TestArber__factory } from "../typechain";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -10,6 +10,7 @@ describe("LFeiPair", () => {
   let tokenAddress: string;
   let feiAddress: string;
   let usdcAddress: string;
+  let arberAddress: string;
   const conversionRateNumerator = 950;
   const initialSupply = 1000;
 
@@ -17,6 +18,7 @@ describe("LFeiPair", () => {
     const [deployer, user] = await ethers.getSigners();
     const LFeiPairFactory = new LFeiPair__factory(deployer);
     const TestERC20Factory = new TestERC20__factory(deployer);
+    const TestArberFactory = new TestArber__factory(deployer);
     const feiContract = await TestERC20Factory.deploy(initialSupply);
     const usdcContract = await TestERC20Factory.deploy(initialSupply);
 
@@ -25,7 +27,9 @@ describe("LFeiPair", () => {
 
     const tokenContract = await LFeiPairFactory.deploy(conversionRateNumerator, feiAddress, usdcAddress);
     tokenAddress = tokenContract.address;
-    expect(await tokenContract.totalSupply()).to.eq(0);
+
+    const arberContract = await TestArberFactory.deploy(feiAddress, usdcAddress);
+    arberAddress = arberContract.address;
   });
   describe("Check constants", async () => {
     it("Should have the correct constants", async () => {

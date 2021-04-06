@@ -24,7 +24,6 @@ interface LFeiPairInterface extends ethers.utils.Interface {
   functions: {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
-    "arb(uint256,address,bytes)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "contractCreator()": FunctionFragment;
     "conversionRateNumerator()": FunctionFragment;
@@ -35,6 +34,7 @@ interface LFeiPairInterface extends ethers.utils.Interface {
     "fei()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
+    "swap(uint256,address,bytes)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
@@ -52,10 +52,6 @@ interface LFeiPairInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "approve",
     values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "arb",
-    values: [BigNumberish, string, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
@@ -85,6 +81,10 @@ interface LFeiPairInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "swap",
+    values: [BigNumberish, string, BytesLike]
+  ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -114,7 +114,6 @@ interface LFeiPairInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "arb", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "contractCreator",
@@ -140,6 +139,7 @@ interface LFeiPairInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "swap", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -212,20 +212,6 @@ export class LFeiPair extends Contract {
     "approve(address,uint256)"(
       spender: string,
       amount: BigNumberish,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    arb(
-      amountFeiOut: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: Overrides
-    ): Promise<ContractTransaction>;
-
-    "arb(uint256,address,bytes)"(
-      amountFeiOut: BigNumberish,
-      to: string,
-      data: BytesLike,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -349,6 +335,20 @@ export class LFeiPair extends Contract {
       0: string;
     }>;
 
+    swap(
+      amountFeiOut: BigNumberish,
+      to: string,
+      data: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "swap(uint256,address,bytes)"(
+      amountFeiOut: BigNumberish,
+      to: string,
+      data: BytesLike,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
     symbol(
       overrides?: CallOverrides
     ): Promise<{
@@ -468,20 +468,6 @@ export class LFeiPair extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
-  arb(
-    amountFeiOut: BigNumberish,
-    to: string,
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
-  "arb(uint256,address,bytes)"(
-    amountFeiOut: BigNumberish,
-    to: string,
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction>;
-
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   "balanceOf(address)"(
@@ -546,6 +532,20 @@ export class LFeiPair extends Contract {
   name(overrides?: CallOverrides): Promise<string>;
 
   "name()"(overrides?: CallOverrides): Promise<string>;
+
+  swap(
+    amountFeiOut: BigNumberish,
+    to: string,
+    data: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "swap(uint256,address,bytes)"(
+    amountFeiOut: BigNumberish,
+    to: string,
+    data: BytesLike,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -634,20 +634,6 @@ export class LFeiPair extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    arb(
-      amountFeiOut: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "arb(uint256,address,bytes)"(
-      amountFeiOut: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "balanceOf(address)"(
@@ -712,6 +698,20 @@ export class LFeiPair extends Contract {
     name(overrides?: CallOverrides): Promise<string>;
 
     "name()"(overrides?: CallOverrides): Promise<string>;
+
+    swap(
+      amountFeiOut: BigNumberish,
+      to: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "swap(uint256,address,bytes)"(
+      amountFeiOut: BigNumberish,
+      to: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -811,20 +811,6 @@ export class LFeiPair extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
-    arb(
-      amountFeiOut: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
-    "arb(uint256,address,bytes)"(
-      amountFeiOut: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: Overrides
-    ): Promise<BigNumber>;
-
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     "balanceOf(address)"(
@@ -889,6 +875,20 @@ export class LFeiPair extends Contract {
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     "name()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    swap(
+      amountFeiOut: BigNumberish,
+      to: string,
+      data: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "swap(uint256,address,bytes)"(
+      amountFeiOut: BigNumberish,
+      to: string,
+      data: BytesLike,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -978,20 +978,6 @@ export class LFeiPair extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
-    arb(
-      amountFeiOut: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
-    "arb(uint256,address,bytes)"(
-      amountFeiOut: BigNumberish,
-      to: string,
-      data: BytesLike,
-      overrides?: Overrides
-    ): Promise<PopulatedTransaction>;
-
     balanceOf(
       account: string,
       overrides?: CallOverrides
@@ -1065,6 +1051,20 @@ export class LFeiPair extends Contract {
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    swap(
+      amountFeiOut: BigNumberish,
+      to: string,
+      data: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "swap(uint256,address,bytes)"(
+      amountFeiOut: BigNumberish,
+      to: string,
+      data: BytesLike,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

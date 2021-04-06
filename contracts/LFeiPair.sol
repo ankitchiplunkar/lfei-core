@@ -7,9 +7,6 @@ import "@uniswap/lib/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/ILFeiPairCallee.sol";
 
-/**
- * @notice A mintable ERC20
- */
 contract LFeiPair is ERC20 {
     using SafeMath for uint256;
 
@@ -58,7 +55,7 @@ contract LFeiPair is ERC20 {
         TransferHelper.safeTransfer(usdc, contractCreator, amountUSDCFees);
     }
 
-    function arb(
+    function swap(
         uint256 amountFeiOut,
         address to,
         bytes calldata data
