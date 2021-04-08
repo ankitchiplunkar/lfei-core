@@ -6,7 +6,9 @@
   "scripts": {
     "build": "npm run compile",
     "compile": "npx hardhat compile",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "chain": "hardhat node",
+    "deploy/local": "hardhat run scripts/deployLocal.ts --network localhost"
   },
   "author": "",
   "license": "MIT",
