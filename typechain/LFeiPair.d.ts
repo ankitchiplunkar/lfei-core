@@ -25,12 +25,14 @@ interface LFeiPairInterface extends ethers.utils.Interface {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "claimFees()": FunctionFragment;
     "contractCreator()": FunctionFragment;
     "conversionRateNumerator()": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "denominator()": FunctionFragment;
     "depositFei(uint256)": FunctionFragment;
+    "feesEarned()": FunctionFragment;
     "fei()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
@@ -54,6 +56,7 @@ interface LFeiPairInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(functionFragment: "claimFees", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "contractCreator",
     values?: undefined
@@ -74,6 +77,10 @@ interface LFeiPairInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "depositFei",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feesEarned",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "fei", values?: undefined): string;
   encodeFunctionData(
@@ -115,6 +122,7 @@ interface LFeiPairInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "claimFees", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "contractCreator",
     data: BytesLike
@@ -133,6 +141,7 @@ interface LFeiPairInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "depositFei", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feesEarned", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "fei", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "increaseAllowance",
@@ -229,6 +238,10 @@ export class LFeiPair extends Contract {
       0: BigNumber;
     }>;
 
+    claimFees(overrides?: Overrides): Promise<ContractTransaction>;
+
+    "claimFees()"(overrides?: Overrides): Promise<ContractTransaction>;
+
     contractCreator(
       overrides?: CallOverrides
     ): Promise<{
@@ -298,6 +311,18 @@ export class LFeiPair extends Contract {
       amountFeiIn: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    feesEarned(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "feesEarned()"(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
 
     fei(
       overrides?: CallOverrides
@@ -475,6 +500,10 @@ export class LFeiPair extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  claimFees(overrides?: Overrides): Promise<ContractTransaction>;
+
+  "claimFees()"(overrides?: Overrides): Promise<ContractTransaction>;
+
   contractCreator(overrides?: CallOverrides): Promise<string>;
 
   "contractCreator()"(overrides?: CallOverrides): Promise<string>;
@@ -512,6 +541,10 @@ export class LFeiPair extends Contract {
     amountFeiIn: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  feesEarned(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "feesEarned()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   fei(overrides?: CallOverrides): Promise<string>;
 
@@ -641,6 +674,10 @@ export class LFeiPair extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    claimFees(overrides?: CallOverrides): Promise<void>;
+
+    "claimFees()"(overrides?: CallOverrides): Promise<void>;
+
     contractCreator(overrides?: CallOverrides): Promise<string>;
 
     "contractCreator()"(overrides?: CallOverrides): Promise<string>;
@@ -678,6 +715,10 @@ export class LFeiPair extends Contract {
       amountFeiIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    feesEarned(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "feesEarned()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     fei(overrides?: CallOverrides): Promise<string>;
 
@@ -818,6 +859,10 @@ export class LFeiPair extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    claimFees(overrides?: Overrides): Promise<BigNumber>;
+
+    "claimFees()"(overrides?: Overrides): Promise<BigNumber>;
+
     contractCreator(overrides?: CallOverrides): Promise<BigNumber>;
 
     "contractCreator()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -855,6 +900,10 @@ export class LFeiPair extends Contract {
       amountFeiIn: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
+
+    feesEarned(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "feesEarned()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     fei(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -988,6 +1037,10 @@ export class LFeiPair extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    claimFees(overrides?: Overrides): Promise<PopulatedTransaction>;
+
+    "claimFees()"(overrides?: Overrides): Promise<PopulatedTransaction>;
+
     contractCreator(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "contractCreator()"(
@@ -1031,6 +1084,10 @@ export class LFeiPair extends Contract {
       amountFeiIn: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
+
+    feesEarned(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "feesEarned()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     fei(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

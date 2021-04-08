@@ -50,11 +50,28 @@ contract LFeiPair is ERC20 {
         _burn(msg.sender, amountLFeiIn);
         uint256 amountUSDCOut = amountLFeiIn.mul(conversionRateNumerator).div(denominator);
         uint256 amountUSDCWithdrawn = amountUSDCOut.mul(usdcFeesNumerator).div(denominator);
-        uint256 amountUSDCFees = amountUSDCOut.sub(amountUSDCWithdrawn);
         TransferHelper.safeTransfer(usdc, msg.sender, amountUSDCWithdrawn);
-        TransferHelper.safeTransfer(usdc, contractCreator, amountUSDCFees);
     }
 
+    function feesEarned() public view returns (uint256) {
+        uint256 reserveFei = IERC20(fei).balanceOf(address(this));
+        uint256 reserveUSDC = IERC20(usdc).balanceOf(address(this));
+        uint256 reserveFeiEquivalentUSDC = reserveFei.mul(conversionRateNumerator).div(denominator);
+        uint256 reserveEquivalentUSDC = reserveFeiEquivalentUSDC.add(reserveUSDC);
+        uint256 outstandingUSDC = totalSupply().mul(conversionRateNumerator).div(denominator);
+        if (outstandingUSDC > reserveEquivalentUSDC) {
+            return 0;
+        } else {
+            return reserveEquivalentUSDC.sub(outstandingUSDC);
+        }
+    }
+
+    // Transfers fees earned to the contract creator
+    function claimFees() public {
+        TransferHelper.safeTransfer(usdc, contractCreator, feesEarned());
+    }
+
+    // Creates a flash loan of amountFeiOut Fei atleast amountFeiOut*conversionRate should be returned back
     function swap(
         uint256 amountFeiOut,
         address to,

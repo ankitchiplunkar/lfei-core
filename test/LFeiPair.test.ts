@@ -118,9 +118,9 @@ describe("LFeiPair", () => {
       expect(await tokenInstance.balanceOf(user.address)).to.equal(initialSupply);
       expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(initialSupply);
       await tokenInstance.connect(user).withdrawUSDC(initialSupply);
-      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(50);
+      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(51);
       expect(await usdcInstance.balanceOf(user.address)).to.equal(949);
-      expect(await usdcInstance.balanceOf(deployer.address)).to.equal(1);
+      expect(await usdcInstance.balanceOf(deployer.address)).to.equal(0);
       expect(await tokenInstance.balanceOf(user.address)).to.equal(0);
     });
 
@@ -168,6 +168,38 @@ describe("LFeiPair", () => {
 
       await expect(arbInstance.flashArb(initialSupply, conversionRateNumerator * initialSupply / denominator - 1, tokenInstance.address))
         .to.be.reverted;
+    });
+
+  });
+
+  describe("Fees", async () => {
+    it("Should correctly calculate and claim fees", async () => {
+      const [deployer, user] = await ethers.getSigners();
+      const tokenInstance = new LFeiPair__factory(deployer).attach(tokenAddress);
+      const feiInstance = new TestERC20__factory(deployer).attach(feiAddress);
+      const usdcInstance = new TestERC20__factory(deployer).attach(usdcAddress);
+      const arbInstance = new TestArber__factory(deployer).attach(arberAddress);
+      const sentBackflashArbedUSDC = conversionRateNumerator * initialSupply / denominator + 1;
+
+      await feiInstance.connect(user).approve(tokenInstance.address, initialSupply);
+      await tokenInstance.connect(user).depositFei(initialSupply);
+      await usdcInstance.connect(user).transfer(arbInstance.address, initialSupply);
+
+      await arbInstance.flashArb(initialSupply, sentBackflashArbedUSDC, tokenInstance.address);
+
+      expect(await feiInstance.balanceOf(arbInstance.address)).to.equal(initialSupply);
+      expect(await tokenInstance.balanceOf(user.address)).to.equal(initialSupply);
+      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(sentBackflashArbedUSDC);
+      await tokenInstance.connect(user).withdrawUSDC(initialSupply);
+
+      expect(await tokenInstance.feesEarned()).to.equal(2);
+      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(2);
+      expect(await usdcInstance.balanceOf(deployer.address)).to.equal(0);
+
+      await tokenInstance.connect(user).claimFees();
+      expect(await tokenInstance.feesEarned()).to.equal(0);
+      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(0);
+      expect(await usdcInstance.balanceOf(deployer.address)).to.equal(2);
     });
 
   });
