@@ -39,18 +39,40 @@ contract LFeiPair is ERC20 {
         _mint(msg.sender, amountFeiIn);
     }
 
-    // Burn LFeiPair from the sender and send equivalent amount of Fei tokens
-    function withdrawFei(uint256 amountLFeiIn) public {
-        _burn(msg.sender, amountLFeiIn);
-        TransferHelper.safeTransfer(fei, msg.sender, amountLFeiIn);
+    // calculate the Fei withdrawable by the user
+    function withdrawableFei(address user) public view returns (uint256) {
+        uint256 reserveFei = IERC20(fei).balanceOf(address(this));
+        uint256 userLfeiBalance = IERC20(address(this)).balanceOf(user);
+        if (reserveFei > userLfeiBalance) {
+            return userLfeiBalance;
+        } else {
+            return reserveFei;
+        }
     }
 
     // Burn LFeiPair from the sender and send equivalent amount of Fei tokens
-    function withdrawUSDC(uint256 amountLFeiIn) public {
-        _burn(msg.sender, amountLFeiIn);
-        uint256 amountUSDCOut = amountLFeiIn.mul(conversionRateNumerator).div(denominator);
-        uint256 amountUSDCWithdrawn = amountUSDCOut.mul(usdcFeesNumerator).div(denominator);
-        TransferHelper.safeTransfer(usdc, msg.sender, amountUSDCWithdrawn);
+    function withdrawFei(uint256 amountFeiOut) public {
+        _burn(msg.sender, amountFeiOut);
+        TransferHelper.safeTransfer(fei, msg.sender, amountFeiOut);
+    }
+
+    // calculate the USDC withdrawable by the user
+    function withdrawableUSDC(address user) public view returns (uint256) {
+        uint256 reserveUSDC = IERC20(usdc).balanceOf(address(this));
+        uint256 userLfeiBalance = IERC20(address(this)).balanceOf(user);
+        uint256 userUSDCBalance = userLfeiBalance.mul(conversionRateNumerator).div(denominator);
+        if (reserveUSDC > userUSDCBalance) {
+            return userUSDCBalance;
+        } else {
+            return reserveUSDC;
+        }
+    }
+
+    // Burn LFeiPair from the sender and send required amount of USDC tokens
+    function withdrawUSDC(uint256 amountUSDCOut) public {
+        uint256 amountLFeiBurn = amountUSDCOut.mul(denominator).div(conversionRateNumerator);
+        _burn(msg.sender, amountLFeiBurn);
+        TransferHelper.safeTransfer(usdc, msg.sender, amountUSDCOut);
     }
 
     function feesEarned() public view returns (uint256) {

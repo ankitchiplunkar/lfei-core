@@ -45,6 +45,8 @@ interface LFeiPairInterface extends ethers.utils.Interface {
     "usdcFeesNumerator()": FunctionFragment;
     "withdrawFei(uint256)": FunctionFragment;
     "withdrawUSDC(uint256)": FunctionFragment;
+    "withdrawableFei(address)": FunctionFragment;
+    "withdrawableUSDC(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -118,6 +120,14 @@ interface LFeiPairInterface extends ethers.utils.Interface {
     functionFragment: "withdrawUSDC",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawableFei",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawableUSDC",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
@@ -170,6 +180,14 @@ interface LFeiPairInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "withdrawUSDC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawableFei",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawableUSDC",
     data: BytesLike
   ): Result;
 
@@ -449,24 +467,52 @@ export class LFeiPair extends Contract {
     }>;
 
     withdrawFei(
-      amountLFeiIn: BigNumberish,
+      amountFeiOut: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "withdrawFei(uint256)"(
-      amountLFeiIn: BigNumberish,
+      amountFeiOut: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     withdrawUSDC(
-      amountLFeiIn: BigNumberish,
+      amountUSDCOut: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "withdrawUSDC(uint256)"(
-      amountLFeiIn: BigNumberish,
+      amountUSDCOut: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
+
+    withdrawableFei(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "withdrawableFei(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    withdrawableUSDC(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
+
+    "withdrawableUSDC(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<{
+      0: BigNumber;
+    }>;
   };
 
   allowance(
@@ -623,24 +669,38 @@ export class LFeiPair extends Contract {
   "usdcFeesNumerator()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   withdrawFei(
-    amountLFeiIn: BigNumberish,
+    amountFeiOut: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "withdrawFei(uint256)"(
-    amountLFeiIn: BigNumberish,
+    amountFeiOut: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   withdrawUSDC(
-    amountLFeiIn: BigNumberish,
+    amountUSDCOut: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "withdrawUSDC(uint256)"(
-    amountLFeiIn: BigNumberish,
+    amountUSDCOut: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
+
+  withdrawableFei(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "withdrawableFei(address)"(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  withdrawableUSDC(user: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "withdrawableUSDC(address)"(
+    user: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   callStatic: {
     allowance(
@@ -797,24 +857,44 @@ export class LFeiPair extends Contract {
     "usdcFeesNumerator()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdrawFei(
-      amountLFeiIn: BigNumberish,
+      amountFeiOut: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "withdrawFei(uint256)"(
-      amountLFeiIn: BigNumberish,
+      amountFeiOut: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     withdrawUSDC(
-      amountLFeiIn: BigNumberish,
+      amountUSDCOut: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "withdrawUSDC(uint256)"(
-      amountLFeiIn: BigNumberish,
+      amountUSDCOut: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    withdrawableFei(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "withdrawableFei(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withdrawableUSDC(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "withdrawableUSDC(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -982,23 +1062,43 @@ export class LFeiPair extends Contract {
     "usdcFeesNumerator()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdrawFei(
-      amountLFeiIn: BigNumberish,
+      amountFeiOut: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "withdrawFei(uint256)"(
-      amountLFeiIn: BigNumberish,
+      amountFeiOut: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     withdrawUSDC(
-      amountLFeiIn: BigNumberish,
+      amountUSDCOut: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "withdrawUSDC(uint256)"(
-      amountLFeiIn: BigNumberish,
+      amountUSDCOut: BigNumberish,
       overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    withdrawableFei(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "withdrawableFei(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withdrawableUSDC(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "withdrawableUSDC(address)"(
+      user: string,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -1168,23 +1268,43 @@ export class LFeiPair extends Contract {
     ): Promise<PopulatedTransaction>;
 
     withdrawFei(
-      amountLFeiIn: BigNumberish,
+      amountFeiOut: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "withdrawFei(uint256)"(
-      amountLFeiIn: BigNumberish,
+      amountFeiOut: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     withdrawUSDC(
-      amountLFeiIn: BigNumberish,
+      amountUSDCOut: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "withdrawUSDC(uint256)"(
-      amountLFeiIn: BigNumberish,
+      amountUSDCOut: BigNumberish,
       overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    withdrawableFei(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "withdrawableFei(address)"(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    withdrawableUSDC(
+      user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "withdrawableUSDC(address)"(
+      user: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
