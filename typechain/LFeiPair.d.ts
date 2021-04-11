@@ -193,10 +193,12 @@ interface LFeiPairInterface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "Swapped(uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Swapped"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -903,6 +905,8 @@ export class LFeiPair extends Contract {
       spender: string | null,
       value: null
     ): EventFilter;
+
+    Swapped(feiSent: null, usdcGained: null): EventFilter;
 
     Transfer(from: string | null, to: string | null, value: null): EventFilter;
   };

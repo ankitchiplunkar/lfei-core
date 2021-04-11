@@ -12,6 +12,7 @@ describe("LFeiPair", () => {
   let usdcAddress: string;
   let arberAddress: string;
   const conversionRateNumerator = 950;
+  const usdcFeesNumerator = 1003;
   const denominator = 1000;
   const initialSupply = ethers.BigNumber.from("100000000000000000000");
 
@@ -46,8 +47,8 @@ describe("LFeiPair", () => {
       expect(await tokenInstance.symbol()).to.equal("LFP");
       expect(await tokenInstance.totalSupply()).to.equal(0);
       // Contract constants
-      expect(await tokenInstance.usdcFeesNumerator()).to.equal(999);
-      expect(await tokenInstance.denominator()).to.equal(1000);
+      expect(await tokenInstance.usdcFeesNumerator()).to.equal(usdcFeesNumerator);
+      expect(await tokenInstance.denominator()).to.equal(denominator);
       // Constructor constants
       expect(await tokenInstance.usdc()).to.equal(usdcAddress);
       expect(await tokenInstance.fei()).to.equal(feiAddress);
@@ -141,7 +142,7 @@ describe("LFeiPair", () => {
   });
 
   describe("Swap", async () => {
-    const sentBackflashArbedUSDC = initialSupply.mul(conversionRateNumerator).div(denominator)
+    const sentBackflashArbedUSDC = initialSupply.mul(conversionRateNumerator).div(denominator).mul(usdcFeesNumerator).div(denominator)
     it("Should correctly swap fei for usdc", async () => {
       const [deployer, user] = await ethers.getSigners();
       const tokenInstance = new LFeiPair__factory(deployer).attach(tokenAddress);
@@ -175,7 +176,6 @@ describe("LFeiPair", () => {
 
   });
 
-  /*
   describe("Fees", async () => {
     it("Should correctly calculate and claim fees", async () => {
       const [deployer, user] = await ethers.getSigners();
@@ -183,30 +183,30 @@ describe("LFeiPair", () => {
       const feiInstance = new TestERC20__factory(deployer).attach(feiAddress);
       const usdcInstance = new TestERC20__factory(deployer).attach(usdcAddress);
       const arbInstance = new TestArber__factory(deployer).attach(arberAddress);
-      const sentBackflashArbedUSDC = initialSupply.mul(conversionRateNumerator).div(denominator).add(1);
+      const flashArbedfeiToUSDC = initialSupply.mul(conversionRateNumerator).div(denominator); 
+      const flashArbedfeiToUSDCWithFees = flashArbedfeiToUSDC.mul(usdcFeesNumerator).div(denominator);
 
       await feiInstance.connect(user).approve(tokenInstance.address, initialSupply);
       await tokenInstance.connect(user).depositFei(initialSupply);
       await usdcInstance.connect(user).transfer(arbInstance.address, initialSupply);
 
-      await arbInstance.flashArb(initialSupply, sentBackflashArbedUSDC, tokenInstance.address);
+      await arbInstance.flashArb(initialSupply, flashArbedfeiToUSDCWithFees.add(1), tokenInstance.address);
 
       expect(await feiInstance.balanceOf(arbInstance.address)).to.equal(initialSupply);
       expect(await tokenInstance.balanceOf(user.address)).to.equal(initialSupply);
-      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(sentBackflashArbedUSDC);
-      await tokenInstance.connect(user).withdrawUSDC(sentBackflashArbedUSDC.sub(1));
+      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(flashArbedfeiToUSDCWithFees.add(1));
+      await tokenInstance.connect(user).withdrawUSDC(flashArbedfeiToUSDC);
 
-      expect(await tokenInstance.feesEarned()).to.equal(2);
-      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(2);
+      expect(await tokenInstance.feesEarned()).to.equal(flashArbedfeiToUSDCWithFees.sub(flashArbedfeiToUSDC).add(1));
+      expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(flashArbedfeiToUSDCWithFees.sub(flashArbedfeiToUSDC).add(1));
       expect(await usdcInstance.balanceOf(deployer.address)).to.equal(0);
 
       await tokenInstance.connect(user).claimFees();
       expect(await tokenInstance.feesEarned()).to.equal(0);
       expect(await usdcInstance.balanceOf(tokenInstance.address)).to.equal(0);
-      expect(await usdcInstance.balanceOf(deployer.address)).to.equal(2);
+      expect(await usdcInstance.balanceOf(deployer.address)).to.equal(flashArbedfeiToUSDCWithFees.sub(flashArbedfeiToUSDC).add(1));
     });
 
   });
-  */
 
 });

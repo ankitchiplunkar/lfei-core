@@ -11,14 +11,16 @@ contract LFeiPair is ERC20 {
     using SafeMath for uint256;
 
     // contract constants
-    uint128 public constant usdcFeesNumerator = 999; // output is 1 - 0.1%
-    uint128 public constant denominator = 1000; // fee is 0.5%
+    uint128 public constant usdcFeesNumerator = 1003; // fees is 0.3%
+    uint128 public constant denominator = 1000; // base for decimals is 1000
 
     // constructor constants
     address public usdc;
     address public fei;
     address public contractCreator;
     uint256 public conversionRateNumerator; // this conversion rate is divided by denominator (1000)
+
+    event Swapped(uint256 feiSent, uint256 usdcGained);
 
     constructor(
         uint256 _conversionRateNumerator,
@@ -107,9 +109,11 @@ contract LFeiPair is ERC20 {
         uint256 newReserveFei = IERC20(fei).balanceOf(address(this));
 
         require(reserveFei > newReserveFei && reserveUSDC < newReserveUSDC, "only one way arb possible");
-        uint256 feiLost = reserveFei - newReserveFei;
-        uint256 equivalentUSDCLost = feiLost.mul(conversionRateNumerator).div(denominator);
+        uint256 feiSent = reserveFei - newReserveFei;
+        uint256 feiSentEquivalentUSDC = feiSent.mul(conversionRateNumerator).div(denominator);
+        uint256 feiSentEquivalentUSDCWithFees = feiSentEquivalentUSDC.mul(usdcFeesNumerator).div(denominator);
         uint256 usdcGained = newReserveUSDC - reserveUSDC;
-        require(equivalentUSDCLost < usdcGained, "USDC returned insufficient");
+        require(feiSentEquivalentUSDCWithFees < usdcGained, "USDC returned insufficient");
+        emit Swapped(feiSent, usdcGained);
     }
 }
