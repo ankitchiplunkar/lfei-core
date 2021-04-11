@@ -8,7 +8,7 @@
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
     "chain": "hardhat node",
-    "deploy/local": "hardhat run scripts/deployLocal.ts --network localhost"
+    "deploy/test": "hardhat run scripts/deployTest.ts"
   },
   "author": "",
   "license": "MIT",
