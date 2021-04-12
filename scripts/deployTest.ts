@@ -3,7 +3,7 @@
 // When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import { ethers } from 'hardhat';
-import { TestERC20__factory, LFeiPair__factory, TestArber__factory } from "../typechain";
+import { TestFei__factory, TestUSDC__factory, LFeiPair__factory, TestArber__factory } from "../typechain";
 
 
 
@@ -17,12 +17,13 @@ async function main(): Promise<void> {
   const initialSupply = ethers.BigNumber.from("100000000000000000000")
 
   console.log(deployer.address);
-  const TestTokenFactory = new TestERC20__factory(deployer);
-  const FeiInstance = await TestTokenFactory.deploy(initialSupply);
+  const TestFeiTokenFactory = new TestFei__factory(deployer);
+  const FeiInstance = await TestFeiTokenFactory.deploy(initialSupply);
   await FeiInstance.deployed();
   console.log('Fei deployed to: ', FeiInstance.address);
   console.log("Sender balance", (await FeiInstance.balanceOf(deployer.address)).toString());
-  const USDCInstance = await TestTokenFactory.deploy(initialSupply);
+  const TestUsdcTokenFactory = new TestUSDC__factory(deployer);
+  const USDCInstance = await TestUsdcTokenFactory.deploy(initialSupply);
   await USDCInstance.deployed();
   console.log('USDC deployed to: ', USDCInstance.address);
   console.log("Sender balance", (await USDCInstance.balanceOf(deployer.address)).toString());
