@@ -17,6 +17,9 @@ contract LFeiPair is ERC20 {
     // constructor constants
     address public usdc;
     address public fei;
+    uint256 private constant feiDecimals = 1000000000000000000;
+    uint256 private constant usdcDecimals = 1000000;
+        
     address public contractCreator;
     uint256 public conversionRateNumerator; // this conversion rate is divided by denominator (1000)
 
@@ -34,6 +37,18 @@ contract LFeiPair is ERC20 {
     }
 
     receive() external payable {}
+
+    function feiToEquivalentUSDC(uint256 amountFei) internal view returns (uint256) {
+        uint256 feiToUSDC = amountFei.mul(conversionRateNumerator).div(denominator);
+        uint256 feiToUSDCWithDecimals = feiToUSDC.div(feiDecimals).mul(usdcDecimals);
+        return feiToUSDCWithDecimals;
+    }
+
+    function usdcToEquivalentFei(uint256 amountUSDC) internal view returns (uint256) {
+        uint256 feiToUSDC = amountUSDC.mul(denominator).div(conversionRateNumerator);
+        uint256 feiToUSDCWithDecimals = feiToUSDC.div(usdcDecimals).mul(feiDecimals);
+        return feiToUSDCWithDecimals;
+    }
 
     // Deposit Fei into the contract and mint equivalent amount of LFeiPair tokens
     function depositFei(uint256 amountFeiIn) public {
@@ -62,7 +77,7 @@ contract LFeiPair is ERC20 {
     function withdrawableUSDC(address user) public view returns (uint256) {
         uint256 reserveUSDC = IERC20(usdc).balanceOf(address(this));
         uint256 userLfeiBalance = IERC20(address(this)).balanceOf(user);
-        uint256 userUSDCBalance = userLfeiBalance.mul(conversionRateNumerator).div(denominator);
+        uint256 userUSDCBalance = feiToEquivalentUSDC(userLfeiBalance);
         if (reserveUSDC > userUSDCBalance) {
             return userUSDCBalance;
         } else {
@@ -72,7 +87,7 @@ contract LFeiPair is ERC20 {
 
     // Burn LFeiPair from the sender and send required amount of USDC tokens
     function withdrawUSDC(uint256 amountUSDCOut) public {
-        uint256 amountLFeiBurn = amountUSDCOut.mul(denominator).div(conversionRateNumerator);
+        uint256 amountLFeiBurn = usdcToEquivalentFei(amountUSDCOut);
         _burn(msg.sender, amountLFeiBurn);
         TransferHelper.safeTransfer(usdc, msg.sender, amountUSDCOut);
     }
@@ -80,9 +95,9 @@ contract LFeiPair is ERC20 {
     function feesEarned() public view returns (uint256) {
         uint256 reserveFei = IERC20(fei).balanceOf(address(this));
         uint256 reserveUSDC = IERC20(usdc).balanceOf(address(this));
-        uint256 reserveFeiEquivalentUSDC = reserveFei.mul(conversionRateNumerator).div(denominator);
+        uint256 reserveFeiEquivalentUSDC = feiToEquivalentUSDC(reserveFei);
         uint256 reserveEquivalentUSDC = reserveFeiEquivalentUSDC.add(reserveUSDC);
-        uint256 outstandingUSDC = totalSupply().mul(conversionRateNumerator).div(denominator);
+        uint256 outstandingUSDC = feiToEquivalentUSDC(totalSupply());
         if (outstandingUSDC > reserveEquivalentUSDC) {
             return 0;
         } else {
@@ -110,7 +125,7 @@ contract LFeiPair is ERC20 {
 
         require(reserveFei > newReserveFei && reserveUSDC < newReserveUSDC, "only one way arb possible");
         uint256 feiSent = reserveFei - newReserveFei;
-        uint256 feiSentEquivalentUSDC = feiSent.mul(conversionRateNumerator).div(denominator);
+        uint256 feiSentEquivalentUSDC = feiToEquivalentUSDC(feiSent);
         uint256 feiSentEquivalentUSDCWithFees = feiSentEquivalentUSDC.mul(usdcFeesNumerator).div(denominator);
         uint256 usdcGained = newReserveUSDC - reserveUSDC;
         require(feiSentEquivalentUSDCWithFees < usdcGained, "USDC returned insufficient");
