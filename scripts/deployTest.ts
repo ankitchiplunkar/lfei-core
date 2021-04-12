@@ -31,7 +31,7 @@ async function main(): Promise<void> {
   console.log('arber deployed to: ', arberContract.address);
 
   // deploying limit order contracts
-  for (let i of [1000, 990, 980, 970, 960, 950]) {
+  for (let i of [1000, 950, 900, 850, 800, 750]) {
     const LFeiPairFactory = new LFeiPair__factory(deployer);
     const LFeiInstance = await LFeiPairFactory.deploy(i, FeiInstance.address, USDCInstance.address);
     await LFeiInstance.deployed();
