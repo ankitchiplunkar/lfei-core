@@ -15,6 +15,7 @@ async function main(): Promise<void> {
   // We get the contract to deploy
   const [deployer] = await ethers.getSigners();
   const initialSupply = ethers.BigNumber.from("100000000000000000000")
+  const initialUSDCSupply = ethers.BigNumber.from("100000000")
 
   console.log(deployer.address);
   const TestFeiTokenFactory = new TestFei__factory(deployer);
@@ -23,7 +24,7 @@ async function main(): Promise<void> {
   console.log('Fei deployed to: ', FeiInstance.address);
   console.log("Sender balance", (await FeiInstance.balanceOf(deployer.address)).toString());
   const TestUsdcTokenFactory = new TestUSDC__factory(deployer);
-  const USDCInstance = await TestUsdcTokenFactory.deploy(initialSupply);
+  const USDCInstance = await TestUsdcTokenFactory.deploy(initialUSDCSupply);
   await USDCInstance.deployed();
   console.log('USDC deployed to: ', USDCInstance.address);
   console.log("Sender balance", (await USDCInstance.balanceOf(deployer.address)).toString());
