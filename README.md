@@ -11,12 +11,16 @@ Several contracts will be deployed each with a unique `conversionRate`, the cont
 These contracts can be treated as limit orders, where the execution is happening via arbitrageurs instead of an exchange.
 
 ### Contract Flow
-1. [depositFei(uint256 amountFeiIn)](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L54): Deposit `amountFeiIn` Fei into the contract and receive an equivalent amount of LFei tokens (used by **Fei holders**)
-2. [withdrawFei(uint256 amountFeiOut) ](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L71): Can withdraw `amountFeiOut` Fei by returning `amountFeiOut` LFei tokens (used by **Fei holders**)
-3. [swap(uint256 amountFeiOut, address to, bytes calldata data)](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L114): Can flash loan `amountFeiOut` Fei tokens from the contract but has to return atleast `conversionRate*amountFeiOut` USDC tokens + 0.3% in fees. Any extra USDC can be claimed by the arbitrageur, the marketplace will give 0.3% of USDC tokens to the contract creator for each USDC withdrawal.(used by **Arbitrageurs**)
-4. [withdrawUSDC(uint256 amountUSDCOut)](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L89): Can withdraw USDC by returning LFei tokens, will burn `amountUSDCOut/conversionRate` lFei tokens from the user and will return `amountUSDCOut` USDC tokens. (used by **Fei holders**)
+1. [depositFei(uint256 amountFeiIn)](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L54): Deposit `amountFeiIn` Fei into the contract and receive an equivalent amount of LFei tokens (used by **Fei holders**) . [Deposit transaction](https://etherscan.io/tx/0x04b4b74dfdf97bf611afc2e9b5961edfa532532f3d020fcbcab56fc47f5a7580)
+2. [withdrawFei(uint256 amountFeiOut) ](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L71): Can withdraw `amountFeiOut` Fei by returning `amountFeiOut` LFei tokens (used by **Fei holders**). [Withdraw Fei transaction](https://etherscan.io/tx/0x2fa51c1f73c33b3660a442baa44e5cad5dc795d3887f069654fe815bf5941749)
+3. [swap(uint256 amountFeiOut, address to, bytes calldata data)](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L114): Can flash loan `amountFeiOut` Fei tokens from the contract but has to return atleast `conversionRate*amountFeiOut` USDC tokens + 0.3% in fees. Any extra USDC can be claimed by the arbitrageur, the marketplace will give 0.3% of USDC tokens to the contract creator for each USDC withdrawal.(used by **Arbitrageurs**). [Arbitrage transaction](https://etherscan.io/tx/0xfaed5d83a23f5bed18e62a65c56354252e6c6e764cf8307695984fc625ada974)
+4. [withdrawUSDC(uint256 amountUSDCOut)](https://github.com/ankitchiplunkar/lfei-core/blob/master/contracts/LFeiPair.sol#L89): Can withdraw USDC by returning LFei tokens, will burn `amountUSDCOut/conversionRate` lFei tokens from the user and will return `amountUSDCOut` USDC tokens. (used by **Fei holders**) [Withdraw USDC transaction](https://etherscan.io/tx/0x803a7e86fe025bddcbc90bf055048663e11e718dbe74123df85460a662dd2a87)
 
 ## Contracts
+
+### Mainnet:
+3. `ConversionRate = 0.9FEI<>1USDC`: [0x7a3b15ee0d0884804f6e846f1f597175ea4631a8](https://etherscan.io/address/0x7a3b15ee0d0884804f6e846f1f597175ea4631a8)
+
 ### Ropsten:
 1. `ConversionRate = 1FEI<>1USDC`: [0xE95b5622410e56ea876fFed00C3f63c6EF3D56A6](https://ropsten.etherscan.io/address/0xE95b5622410e56ea876fFed00C3f63c6EF3D56A6)
 2. `ConversionRate = 0.95FEI<>1USDC`: [0xfECB7F0e191Feefabd85361F91E830e88f304D2F](https://ropsten.etherscan.io/address/0xfECB7F0e191Feefabd85361F91E830e88f304D2F)
