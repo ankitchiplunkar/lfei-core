@@ -19,7 +19,7 @@ async function main(): Promise<void> {
 
   console.log(deployer.address);
   const LFeiPairFactory = new LFeiPair__factory(deployer);
-  const LFeiInstance = await LFeiPairFactory.deploy(990, fei, usdc);
+  const LFeiInstance = await LFeiPairFactory.deploy(1000, fei, usdc);
   await LFeiInstance.deployed();
   console.log('LFei deployed to: ', LFeiInstance.address);
 }

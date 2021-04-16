@@ -14,20 +14,29 @@ async function main(): Promise<void> {
   // await run("compile");
   // We get the contract to deploy
   const [deployer] = await ethers.getSigners();
-  const fei = '0x956F47F50A910163D8BF957Cf5846D573E7f87CA';
-  const usdc = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
-  const arberAddress = "0xd985E01C6D47322a55586A930951fd3E125045B2"
-  const lFeiAddress = "0x7a3B15eE0D0884804F6e846f1F597175ea4631a8"   
+  const feiAddress = "0x1d2413000D1Be1504ff93f8DDF2606f6E1384B4b"
+  const usdcAddress = "0xb42A48ED6Ea543834FD314A54d918f0f52E2A367"
+  const arberAddress = "0x16e57e0Faf1686176cAC07f041679e217Fd4129A"
+
+  const lFeiAddress = "0x6E3fa4c9ACF353d5f1A213008E5A93ec1798b86a"   
 
   console.log(deployer.address);
+  const TestFeiTokenFactory = new TestFei__factory();
+  const FeiInstance = TestFeiTokenFactory.attach(feiAddress);
+  const TestUsdcTokenFactory = new TestUSDC__factory();
+  const USDCInstance = TestUsdcTokenFactory.attach(usdcAddress);
   const TestArberFactory = new TestArber__factory(deployer);
   const arberInstance = TestArberFactory.attach(arberAddress);
+  const LFeiPairFactory = new LFeiPair__factory();
+  const LFeiInstance = LFeiPairFactory.attach(lFeiAddress);
 
-  const feiDecimals = ethers.BigNumber.from("1000000000000000000")
-  const flashArbedFeiValue = feiDecimals.mul(10);
+  // send usdc to arber
+  const flashArbedFeiValue = ethers.BigNumber.from("100000000000000000000");
   const flashArbedfeiToUSDC = flashArbedFeiValue.mul(900).div(1000).div(1000000000000)
   const flashArbedfeiToUSDCWithFees = flashArbedfeiToUSDC.mul(1003).div(1000);
+  // await USDCInstance.connect(deployer).transfer(arberInstance.address, flashArbedFeiValue);
   await arberInstance.connect(deployer).flashArb(flashArbedFeiValue, flashArbedfeiToUSDCWithFees.add(1), lFeiAddress);
+  // await LFeiInstance.connect(deployer).withdrawUSDC(flashArbedFeiValue);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

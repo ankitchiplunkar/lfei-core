@@ -71,6 +71,7 @@ const config: HardhatUserConfig = {
     kovan: createTestnetConfig('kovan'),
     rinkeby: createTestnetConfig('rinkeby'),
     ropsten: createTestnetConfig('ropsten'),
+    mainnet: createTestnetConfig('mainnet'),
   },
   solidity: {
     compilers: [
